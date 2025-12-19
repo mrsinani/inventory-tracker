@@ -1,0 +1,127 @@
+id,item,room,price,stock_up,vendor,method,department,units,stock_on_hand
+776bbb50-c459-49ff-af81-61dcf111c694,Coffee bean (4bags/case),Storage,40,40,Café joe,delivery,FOH,Bag,16
+43a75fde-47fa-452e-ad51-1d367d299d86,Fructose,Storage,54,1,Hoja,delivery,FOH,Drum,1
+089257f6-7dd3-4752-836d-ff8565255a08,Condensed milk 24/14 oz Cans,Storage,42.7,10,RD,delivery,FOH,Case,6
+8dd91ec9-7d81-4bc5-b419-fb0888365c66,Dark brown sugar 16oz(1lb)453g,Storage,1.5,2,RD,delivery,FOH,Item,8
+6144bfcf-898b-4ea6-86f1-01b5979c1574,Salt 26oz,Storage,4.13,2,RD,Instore,BOH,Item,3
+86f02208-37a2-45e8-9431-6148c0ba4aae,Cinnamon sticks 3lbs,Storage,40.57,1,RD,delivery,FOH,Item,1
+dda53070-6356-4fae-b47c-949e23fe5c6c,16 oz plastic cup (10 rolls/cases: 1000 cups),Storage,52.2,1,RD,delivery,FOH,Case,2
+28d27cf1-df35-46ac-aaf1-7c497642ab0e,16 oz  sip lid (10 rolls/cases: 1000 cups),Storage,74.99,1,Webrestaurant,delivery,FOH,Case,1
+7596ebf1-df37-4a78-93e4-8c8a458c2a92,10 oz plastic cup (10 rolls/cases: 1000 cups),Storage,53.86,1,RD,delivery,FOH,Case,1
+a0cbe606-b3e7-4ed3-b753-9404d4a97b8c,Domino - White Sugar - 50 lb bag,Storage,39.99,1,RD,delivery,BOH,Bag,1
+d1f8390f-51f9-49a2-83f4-e840a7674ac2,Thai green tea bag,Storage,9.74,40,Amazon,Hoja,FOH,Bag,10
+e715b866-f121-490a-a603-b08eaa099543,Jasmine Tea,Storage,13.5,10,Hoja,Hoja,FOH,Bag,2
+73e92d41-2fd8-47a8-81a9-9cd01eae2605,Crème Brulee (6bags/1 case),Storage,8.678333333333333,5,Atlanta premium,delivery,FOH,Bag,7
+253d3a35-0090-4e4d-bc9a-7b9101a755f4,Orange syrup,Storage,13.333333333333334,3,Hoja,delivery,FOH,Can,21
+13dd5467-efe0-4c58-80af-2e5d891d7219,Peach syrup,Storage,13.333333333333334,3,Hoja,delivery,FOH,Can,21
+760feea6-e116-4abf-8240-64c40eda1c6c,black pepper (5lbs/can),Storage,54.6,1,RD,delivery,BOH,Can,1
+9ac1a3a5-8d6a-469e-abb8-6d7efc956cf0,corn starch 3.5lb,Storage,6.55,1,Amazon,delivery,Baking,Can,0
+d5cf7f87-e380-47f7-a107-2f59a539d489,oyster sauce 5lb,Storage,8.165,6,Webrestaurant,delivery,BOH,Can,6
+cd1a8fac-a87a-4a6c-860f-8219cb148b39,mayo 450g,Storage,5.49,5,Weee,delivery,BOH,Item,6
+2cee6c5c-3826-4e01-b2ff-b54030751169,Bleach (3 bottles/case),Storage,11.46,2,RD,delivery,Facilities,Can,4
+35cd13db-e636-41d9-8d16-63835dd16006,Windex spray table (8bottles/case),Storage,5.93,5,RD,delivery,Facilities,Item,4
+8f83a0e8-9f1e-48b9-83f2-f83a46a20d70,Windex - Original Pro Glass Cleaner Trig 32oz,Storage,7.19,5,RD,delivery,Facilities,Item,5
+e41b01d9-74df-4835-b2bc-06cc6d7cf181,Mop cotton,Storage,8.22,5,RD,delivery,Facilities,Item,2
+5fe7f1ed-bddc-46e7-ab09-d938d3e474bc,Hot cup 8oz,Storage,30.98,1,RD,delivery,FOH,Case,1
+8682e23a-0544-43a8-b617-6a20e4c6344f,25 shortly bulwark duro bag,Storage,33.11,1,RD,delivery,BOH,Case,0
+3e69314a-0974-4ed2-a882-27b0fc4cdd96,corn oil 2.5 Gal,Storage,24.24,1,RD,delivery,BOH,Case,1
+99d71474-482b-466a-a842-ad3613156f1d,Paper tray 300ct,Storage,39.99/case,2,Webrestaurant,delivery,FOH,Loaf,3
+fe1e64ae-441c-4a98-927b-f66d4241773b,Honey,Storage,12.99,1,Costco,Instore,Baking,Item,4
+9a5e63c2-3b15-471f-9625-de9f5096dda7,Hand soap 1 gl ( 4/cases),Storage,30.99/case,2,Webrestaurant,delivery,Facilities,Item,4
+851430bd-1bf5-480b-8f8b-f3e34f7b1bbc,Kirland scent trash bag,Storage,8.845,1,Costco,Instore,Facilities,Case,1
+d84e8551-f67c-45f2-9c79-e1bf13b20b09,Olive oil 2L,Storage,19.89,1,Costco,Instore,BOH,Item,2
+6284f43e-1396-4551-a147-c0c5b87ff412,Paper towel,Storage,1.7074999999999998,60,Webrestaurant,Instore,Facilities,Item,15
+3067702e-c66d-4159-a84b-dd7b5fc17852,Tambee Tea Bag 5.9*7.87,Storage,19.98,2,Amazon,delivery,FOH,Item,1
+fa6ce678-bddd-4060-b793-cab56d6bb2de,King Arthur Artisant flour 11.7%,Storage,37.19,1,Webrestaurant,delivery,Baking,Case,1
+7228f3f9-9306-4b4e-95f5-e75cb3f93d27,King  Arthur Special Patent flour 12.7 %,Storage,36.69,1,Webrestaurant,delivery,Baking,Case,0
+5e062db2-46fb-4850-8c27-601ccaba7590,Fabuloso ( 3 bottles/case),Storage,22.69,4,RD,delivery,Facilities,Item,2
+5067cad1-af6e-4980-b9d6-25864dde7e8d,Towel Rag (150 rags/ pack),Storage,,1,Amazon,delivery,Facilities,Bag,0
+573a829c-38d2-4be6-a700-68cc55bc08af,Basalmic vinegar (6 bottles/case),Storage,5.218333333333333,2,RD,delivery,BOH,Bottle,3
+fa478f08-29d4-4279-8157-eeb3261c1c5e,Powder sugar 4lbs,Storage,5.29,1,BJ,delivery,Baking,Item,1
+23107cf5-efe8-48da-a5f7-f0d0ad0bb8dd,Nutella 2/26.5 oz jars,Storage,15.32,1,RD,delivery,Baking,Bottle,1
+2bb3e4ae-d709-4f7e-8b9b-124bc466066e,Orange marmalade,Storage,46.15,1,RD,delivery,BOH,Item,5
+52c5f40f-847d-459c-b446-354b753b6054,Butane fuel,Storage,2.4608333333333334,1,RD,delivery,BOH,Bottle,10
+b5608fd8-c8a3-47ac-8f8c-293c2608f464,Satay Chili Oil 7.2oz,Storage,4.99,1,Weee,delivery,BOH,Bottle,6
+c86242ba-b3c9-4145-9140-61b365900f71,Cholimex 750ml,Storage,4.79,5,Weee,delivery,BOH,Item,5
+6a472916-7344-47d3-a5da-0d4f833e9243,Dried Chives,Storage,12.33,1,RD,delivery,Baking,Item,1
+4a2f6bc2-a5df-4be6-a3e7-bfc20018d182,Black gloves (10boxes/case),Storage,38.49,1,Webrestaurant,delivery,Facilities,Box,8
+84b71c57-b6e0-46de-90bc-e85cd37593b6,Pork floss 18oz,Storage,17.95,3,Food pak,Pickup,BOH,Item,7
+c93906f8-8160-411f-b2af-f326f91800f0,Foil white sandwich bag (matt 6500240) 1000,Storage,79.46,1,RD,Pickup,BOH,Case,1
+64fc9785-5f7c-47a3-8591-35895d7b817a,Cup Sleeves,Storage,,5,,delivery,FOH,Case,0
+557ccea8-60ba-41eb-a500-33f2f91b3237,Straws,Storage,52,1,Hoja,delivery,FOH,Case,2
+aa44cc2d-f741-47da-b5d1-eef3b431bca8,Receipt Paper( 50 rolls/case),Storage,1.28,1,Amazon,delivery,FOH,Pack,0
+8c90ecee-2a4a-46a6-aa2d-587eca7686d2,Food Label,Storage,,5,Amazon,delivery,FOH,Roll,1
+5b4b0fcc-32bf-4d82-ba2e-905d5d6842c1,Drink to go bag,Storage,,1,Food pak,Pickup,FOH,Case,1
+903e4ad9-a5a7-47bd-b332-362fe328d6ca,Soy Sauce 1.75L,Storage,10.25,4,Food pak,delivery,BOH,bottle,3
+08c3941f-383c-42ee-8f41-789170f90ad7,Peeled Garlic 5lbs,Storage,20.49,1,RD,delivery,BOH,bottle,1
+a10b9d7d-dc24-4336-a46d-134dba90a3bc,Fried Onion,Storage,,10,Food Pak,Pickup,BOH,item,2
+6ff86e87-48de-4ada-a35a-2a8ea7b608d5,CPE Gloves (10 boxes/ case),Storage,19.49,2,Webrestaurant,delivery,Facilities,case,3
+599655c4-536a-46b8-831c-978214f13b5c,Zip bag Big,Storage,,5,Costco,Instore,BOH,item,5
+225b0da9-fd7e-456c-9cbd-334cf4876f83,Zip bag Small,Storage,9.99,12,Costco,Instore,BOH,item,14
+de3b40ff-bbc8-4244-ad00-05b742a028f9,Lysol toilet cleaning liquid ( 9 bottles/case),Storage,26.99,3,Webrestaurant,delivery,Facilities,Bottle,6
+afef6cf1-0444-439d-8c2f-0f51c26d62a4,Wax paper ez 6,Storage,,2,Food pak,Pickup,BOH,box,9
+f439fa6e-65f7-4b33-944b-67fe8ead2e6f,Wax paper ez 12 500 sheets,Storage,10.78,4,Food pak,Pickup,BOH,box,2
+1224bb56-6438-4350-9f43-d3eeab914b12,Big get reddi bag,Storage,,1,Webrestaurant,delivery,BOH,box,0
+5373a5c3-0503-4c80-969b-d3b921c0bf1d,Small get reddi bag 6x3x15,Storage,,1,Webrestaurant,delivery,BOH,box,0
+defb041e-405f-4f24-a111-385150b0e88a,Scent spray ( 4 bottles/pack),Storage,12.49,4,Costco,delivery,Facilities,Item,4
+0a3de2a4-50c2-4a43-af59-dfeb49faeead,33 gal black can liners 100 bags,Storage,35.56,1,RD,delivery,Facilities,Case,1
+071ee1cf-5391-432e-a912-393e9ac82088,Bamboo chopsticks,Storage,,1,Food pak,Pickup,BOH,Pack,1
+53cc99df-e020-494c-a19d-f4eb6182a7eb,Sealing plastic bag,Storage,6,2,Amazon,delivery,BOH,Pack,6
+f37a47f7-cc81-4a19-a30a-86c25098f3bd,Egg (2.5dz/tray) 30 dozen,Facility room,76.33,10,RD,delivery,BOH,Tray,3
+0e4d784e-f0c7-46e9-8a67-f9cee4cb4d45,Brioche toast 20 slices/loaf,Facility room,9.86,5,la marca,delivery,Baking,loaf,0
+e024de75-2026-484d-ab55-22b77543a4a1,frozen strawberry (900g/zipbag) 10lbs,Facility room,14.18,7,RD,delivery,BOH,Zipbag,5
+c6c1a983-7e9a-4eb7-9c71-38fdbe9bf4c8,Unsalted butter (4box/case),Facility room,3.0725,40,BJ,delivery,Baking,Box,16
+18894d35-c069-4568-9a11-d64519e25a8b,Pre sliced Ham ( 1lb/bag),Facility room,4.99,2,BJ,delivery,Baking,Zipbag,2
+81b47391-ab40-49b3-9ab3-8e92414e3dde,chocolate chip (500g/zipbag),Facility room,125.88,2,RD,delivery,Baking,Zipbag,1
+c08ea5b9-0f98-4699-9257-89f29d717b75,Cacao powder 1lb,Facility room,18,1,Amazon,delivery,FOH,Bag,1
+5cfa9ea6-b639-41b7-be40-c30aa2fb5366,Matcha powder 500g/bag,Facility room,73.3,5,mem tea,delivery,FOH,Bag,2
+36bd805f-b00e-4f70-beff-0790540dada4,frozen mango (900g/zipbag),Facility room,,5,RD,delivery,BOH,Zipbag,6
+ef2a2bda-c2d1-4904-a235-06872763d972,yeast,Facility room,,1,Baldor,delivery,Baking,Item,0
+5556420b-015c-47e8-8325-d964af78f87f,Baking sheet,Facility room,,1,RD,delivery,Baking,Case,1
+1da62526-d855-4343-a3be-e95e48a6bcd2,pate 39lbs,Facility room,5.25,1,Vina food,delivery,BOH,Item,25
+88ce5d13-81c6-419d-891e-2e1b73265d0d,ground pork (400g/zipbag),Facility room,2.864,1,RD,delivery,Baking,Zipbag,1
+4b5bb8d4-0dc4-4302-b484-ae7bfc88142d,ground beef (200g/zipbag),Facility room,4.81,1,RD,delivery,Baking,Zipbag,3
+c517817c-7caa-4157-ab36-0fa50efb166f,Pre-sliced  American cheese 120 slices,Facility room,15.82,2,RD,delivery,Baking,loaf,2
+51d22e84-f0a6-4199-b002-e39606702ac0,Laughing cow (8triangle/item),Facility room,8.89,320 item,Costco,Instore,BOH,item,160
+f99c6f56-d664-4eba-ab61-35e7d04b7da4,Cinnamon ground,Facility room,,1,RD,delivery,BOH,Item,1
+da554f10-b48d-425b-bfae-aaec797c9cc0,Vanilla extract,Facility room,36.39,1,Baldor,delivery,Baking,Bottle,0
+fda272ba-fbfc-4956-b9d0-d2c0f0dd57e0,Sourdough 3lbs,Facility room,7.08,5,la marca,,Baking,Bag,0
+c3aa97b1-ccc4-404e-b611-589a7db82603,Bacon,Facility room,,1,RD,delivery,BOH,Zipbag,1
+1bfbc2a2-cdbb-4505-9215-354ef67e53da,Smoke Salmon (30slices/zipbag),Facility room,16.08,2,RD,delivery,BOH,Zipbag,10
+9432cd2d-f684-46fc-8ef1-6373f636fbf5,Halves frozen avocado (4bag/case) 1350gr/bag,Facility room,46.93,1,RD,delivery,BOH,Bag,5
+f492781b-0a08-4bc7-a73c-e7e48f1c985d,Lemon juice,Facility room,,1,RD,delivery,BOH,Bottle,3
+3935fb61-1fda-4848-82b1-08e8d0998f12,crumbled feta,Facility room,6.99,1,Costco,Pickup,BOH,Item,1
+fac135bd-303d-45da-a4fc-ad1608d171e0,Tiramisu,Facility room,31.77,1,RD,delivery,FOH,Case,0
+94b6e817-1e29-41c1-b956-5dec4c89180a,Cilantro (4unit/zipbag),Facility room,19.24,1,RD,delivery,BOH,Zipbag,10
+b07de393-798a-4ab4-8cb2-189b40ffc8e4,Vietnamese Ham 36lbs/case,Facility room,5.25,1,Vina food,Pickup,BOH,Item,31
+a2bbbd2f-b4bd-4616-ad26-87c79d069030,Coldcut,Facility room,4.25,1,Vina food,Pickup,BOH,Item,21
+fbaa5cf9-c80d-432f-bafc-cf7218ae57cd,Dijon Mustard 5kg/bottle,Facility room,47.11,1,Baldor,Pickup,BOH,Container,2
+ad2f0e1c-2fbf-449a-86eb-f6c5f300d3fa,Banh mi (9/bag),Facility room,0.65,250,Boston,Pickup,BOH,Bag,13
+efb690bc-513b-4db1-92b3-f69fc36b6aae,Grape tomato 1.5lbs,Working station,6.99,1,BJ,delivery,BOH,Item,1
+acb2e85b-ecf3-4f5f-939d-94d279c5b321,Baby arugula 5oz,Working station,2.99,2,BJ,delivery,BOH,Item,1
+7bc16581-d88b-4e33-8fd8-eee6c33ae050,Fresh strawberry 1lb,Working station,4.79,2,BJ,delivery,BOH,Item,0
+e09b81bf-afb3-44a9-933c-604f61e4376a,Fresh blueberry 18oz,Working station,5.89,1,BJ,delivery,BOH,Item,1
+a4417fc0-89a2-4852-8d41-d1b6814c2cd9,Maple syrup,Working station,9.42,1,RD,delivery,BOH,Item,1
+0ae3189b-025e-4791-8cb9-93a2a63d206e,Mint,Working station,2.99,1,BJ,delivery,BOH,Item,0
+645497ca-f445-4a69-a96b-7f454283cf35,Dill,Working station,$2.49/tack,1,BJ,delivery,BOH,Item,1
+a2412076-a5c0-4757-a689-aa477ffe092e,Cucumber (10lb/tray),Working station,29.58,3,RD,delivery,BOH,Tray,2
+367a035d-4ed4-4e13-9be9-37c88c579a95,Lemon 5lb,Working station,9.38,2,RD,delivery,BOH,Item,0
+c30fd11d-7691-4c8f-b609-87817352013b,Oat Milk 86oz,Working station,4.79,2,BJ,delivery,FOH,Bottle,0
+f14c50d6-1ea8-417a-beec-22cd7d9c3c9f,Almond Milk 2pk/64oz,Working station,6.29,2,BJ,delivery,FOH,Bottle,2
+695161ae-b4f6-4908-adcc-6fb3319f699e,Egg yolk,Working station,$58.99/case,24,RD,delivery,FOH,Item,12
+5782a10e-5029-41ec-9510-c69c11651f7c,Philly cream cheese (6items/case),Working station,59.94,30,Costco,Instore,FOH,Item,19
+623ea832-4f4d-4783-9c88-a69670dca26d,Heavy cream 36% (12 bottles/case),Working station,54.03,24,RD,delivery,FOH,Item,16
+94dfa15d-f906-4371-8a7c-e685b5d9e594,Whole milk 96oz,Working station,5.29,10,BJ,delivery,FOH,Bottle,4
+c07fbb85-1c88-4823-8a6a-bc07f32e3dfc,Orange Fancy Oranges - 88/113 ct,Working station,44.32,1,RD,delivery,FOH,Case,0
+bfe94264-1836-4732-8aef-7916e187a113,yellow onion,Working station,,1,RD,delivery,Baking,Item,12
+41205abc-569e-486a-9f08-955e7e78dba8,Beef rib eye steak,Facility room,15.99,25,99 ranch,instore,BOH,Bag,6
+c215b480-85d9-4ff6-a459-c23c6a41e902,Baked Croissant (12 items/box),Facility room,19.34,4,la marca,delivery,Baking,Item,34
+8bcc5038-e4d1-40c8-aab0-77185509c122,White vinegar 3.79L (4 bottles/case),Storage,4.57/bottles,1,RD,delivery,BOH,Item,3
+ad099868-0ded-4992-8f01-c35b6101f685,Toilet Paper 4 loafs/case ( 24 rolll/loaf),Storage,49.49,36,RD,delivery,Facilities,Loaf,1
+3e6d3e7b-c61b-4467-8de5-48ed2ae2c435,Dinner Napkins 3000 ct,Storage,38.25,1,RD,delivery,Facilities,Case,1
+c5b2e590-a0f9-4ed8-9c30-d3fd9a149f27,Multifold Kraft/Brown Towels 4000 ct,Storage,30.11,1,RD,delivery,Facilities,Case,1
+014204cd-e744-4b73-981d-54b62187f939,Baking Powder - Clabber girl 8.1oz,Facility room,3.2,1,Amazon,delivery,Baking,Item,0
+274475c1-e5f4-48c2-81c1-c095d45532a2,Almond extract,Facility room,,1,Star market,Instore,Baking,Item,1
+5e493594-041a-4ec8-8369-8fedd0940814,Almond slices,Facility room,,1,Star market,Instore,Baking,Item,0
+3df56e5a-3731-4ca5-9a29-ccf5d4f1a245,Almond powder,Facility room,,1,Star market,Instore,Baking,Item,0
+9f1ef784-285e-4f76-94e5-b7246775dc1d,Choice 12 oz Hot Cup - 500/Case,Storage,,,Webrestaurant,delivery,FOH,Case,1

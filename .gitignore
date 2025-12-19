@@ -1,2 +1,5 @@
 .danaid/
 .env
+.claude/
+/node_modules
+/.next
