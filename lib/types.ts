@@ -19,8 +19,9 @@ export interface Transaction {
   actual_received: string;
   previous_stock: string;
   new_stock: string;
-  consumption: string;
-  status: 'pending' | 'completed';
+  // Legacy field from earlier versions; no longer used in the UI or logic
+  consumption?: string;
+  status: "pending" | "completed";
   notes?: string;
 }
 

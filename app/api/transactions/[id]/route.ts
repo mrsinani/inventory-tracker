@@ -25,20 +25,31 @@ export async function DELETE(
 
     const transaction = transactions[transactionIndex];
 
-    // If this is a completed transaction, revert the stock change
+    // Remove the transaction first
+    transactions.splice(transactionIndex, 1);
+
+    // Recompute the item's stock based on remaining completed transactions
     if (transaction.status === 'completed') {
       const items = await readInventory();
       const itemIndex = items.findIndex(i => i.id === transaction.inventory_id);
 
       if (itemIndex !== -1) {
-        // Revert to previous stock
-        items[itemIndex].stock_on_hand = transaction.previous_stock;
+        // Find the latest completed transaction for this item (after deletion)
+        const remainingForItem = transactions
+          .filter(t => t.inventory_id === transaction.inventory_id && t.status === 'completed')
+          .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+        if (remainingForItem.length > 0) {
+          // Set stock to the most recent completed transaction's new_stock
+          items[itemIndex].stock_on_hand = remainingForItem[0].new_stock;
+        } else {
+          // No completed transactions remain; fall back to the deleted transaction's previous stock
+          items[itemIndex].stock_on_hand = transaction.previous_stock;
+        }
+
         await writeInventory(items);
       }
     }
-
-    // Remove the transaction
-    transactions.splice(transactionIndex, 1);
 
     // Write updated transactions back to file
     const DATA_DIR = path.join(process.cwd(), 'data');

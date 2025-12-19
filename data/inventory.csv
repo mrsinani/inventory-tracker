@@ -1,5 +1,5 @@
 id,item,room,price,stock_up,vendor,method,department,units,stock_on_hand
-776bbb50-c459-49ff-af81-61dcf111c694,Coffee bean (4bags/case),Storage,40,40,Café joe,delivery,FOH,Bag,16
+776bbb50-c459-49ff-af81-61dcf111c694,Coffee bean (4bags/case),Storage,40,40,Café joe,delivery,FOH,Bag,18
 43a75fde-47fa-452e-ad51-1d367d299d86,Fructose,Storage,54,1,Hoja,delivery,FOH,Drum,1
 089257f6-7dd3-4752-836d-ff8565255a08,Condensed milk 24/14 oz Cans,Storage,42.7,10,RD,delivery,FOH,Case,6
 8dd91ec9-7d81-4bc5-b419-fb0888365c66,Dark brown sugar 16oz(1lb)453g,Storage,1.5,2,RD,delivery,FOH,Item,8

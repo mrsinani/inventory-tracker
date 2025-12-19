@@ -1,37 +1,35 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Transaction } from '@/lib/types';
 
 interface PendingOrderBadgeProps {
   inventoryId: string;
+  pendingOrders?: Transaction[];
 }
 
-export default function PendingOrderBadge({ inventoryId }: PendingOrderBadgeProps) {
-  const [pendingCount, setPendingCount] = useState(0);
-
-  useEffect(() => {
-    fetchPendingOrders();
-  }, [inventoryId]);
-
-  const fetchPendingOrders = async () => {
-    try {
-      const response = await fetch(`/api/transactions?inventory_id=${inventoryId}`);
-      if (response.ok) {
-        const transactions = await response.json();
-        const pending = transactions.filter((t: any) => t.status === 'pending');
-        setPendingCount(pending.length);
-      }
-    } catch (error) {
-      console.error('Error fetching pending orders:', error);
-    }
-  };
+export default function PendingOrderBadge({ inventoryId, pendingOrders }: PendingOrderBadgeProps) {
+  // Filter pending orders for this specific inventory item
+  const itemPendingOrders = pendingOrders?.filter(
+    (t) => t.inventory_id === inventoryId && t.status === 'pending'
+  ) || [];
+  
+  const pendingCount = itemPendingOrders.length;
 
   if (pendingCount === 0) {
     return null;
   }
 
+  // Calculate total pending quantity
+  const totalQuantity = itemPendingOrders.reduce(
+    (sum, order) => sum + (parseFloat(order.ordered_quantity) || 0),
+    0
+  );
+
   return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+    <span 
+      className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800"
+      title={`${totalQuantity.toFixed(0)} units on order`}
+    >
       {pendingCount} ORDER{pendingCount > 1 ? 'S' : ''} PENDING
     </span>
   );

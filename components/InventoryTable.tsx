@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { InventoryItem, Transaction } from '@/lib/types';
 import LowStockBadge from './LowStockBadge';
 import PendingOrderBadge from './PendingOrderBadge';
@@ -18,6 +18,7 @@ interface InventoryTableProps {
 export default function InventoryTable({ initialItems }: InventoryTableProps) {
   const [items, setItems] = useState<InventoryItem[]>(initialItems);
   const [pendingOrdersByItem, setPendingOrdersByItem] = useState<Map<string, Transaction[]>>(new Map());
+  const [allPendingOrders, setAllPendingOrders] = useState<Transaction[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('');
   const [roomFilter, setRoomFilter] = useState('');
@@ -71,19 +72,17 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
     });
   }, [items, searchTerm, departmentFilter, roomFilter, showLowStockOnly]);
 
-  useEffect(() => {
-    fetchPendingOrders();
-  }, [items]);
-
-  const fetchPendingOrders = async () => {
+  const fetchPendingOrders = useCallback(async () => {
     try {
       const response = await fetch('/api/transactions');
       if (response.ok) {
-        const allTransactions = await response.json();
+        const allTransactions: Transaction[] = await response.json();
         const pendingMap = new Map<string, Transaction[]>();
+        const pendingList: Transaction[] = [];
 
         allTransactions.forEach((t: Transaction) => {
           if (t.status === 'pending') {
+            pendingList.push(t);
             const existing = pendingMap.get(t.inventory_id) || [];
             existing.push(t);
             pendingMap.set(t.inventory_id, existing);
@@ -91,11 +90,16 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
         });
 
         setPendingOrdersByItem(pendingMap);
+        setAllPendingOrders(pendingList);
       }
     } catch (error) {
       console.error('Error fetching pending orders:', error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchPendingOrders();
+  }, [fetchPendingOrders]);
 
   const refreshItems = async () => {
     const response = await fetch('/api/inventory');
@@ -214,7 +218,7 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
                     <div className="flex items-center gap-2">
                       <div className="text-sm font-medium text-gray-900">{item.item}</div>
                       <LowStockBadge stockOnHand={item.stock_on_hand} stockUp={item.stock_up} />
-                      <PendingOrderBadge inventoryId={item.id} />
+                      <PendingOrderBadge inventoryId={item.id} pendingOrders={allPendingOrders} />
                     </div>
                     <div className="text-sm text-gray-500">{item.vendor}</div>
                   </td>

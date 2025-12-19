@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { InventoryItem, Transaction } from '@/lib/types';
 
 interface StockUpdateModalProps {
@@ -11,26 +11,18 @@ interface StockUpdateModalProps {
 }
 
 export default function StockUpdateModal({ isOpen, onClose, item, onSuccess }: StockUpdateModalProps) {
-  const [orderedQuantity, setOrderedQuantity] = useState('');
   const [actualReceived, setActualReceived] = useState('');
-  const [newStock, setNewStock] = useState('');
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [pendingOrders, setPendingOrders] = useState<Transaction[]>([]);
   const [selectedPendingOrder, setSelectedPendingOrder] = useState<string>('');
 
-  useEffect(() => {
-    if (isOpen) {
-      fetchPendingOrders();
-    }
-  }, [isOpen, item.id]);
-
   const fetchPendingOrders = async () => {
     try {
       const response = await fetch(`/api/transactions?inventory_id=${item.id}`);
       if (response.ok) {
-        const transactions = await response.json();
+        const transactions: Transaction[] = await response.json();
         const pending = transactions.filter((t: Transaction) => t.status === 'pending');
         setPendingOrders(pending);
       }
@@ -39,41 +31,40 @@ export default function StockUpdateModal({ isOpen, onClose, item, onSuccess }: S
     }
   };
 
+  useEffect(() => {
+    if (isOpen && item?.id) {
+      fetchPendingOrders();
+    }
+  }, [isOpen, item?.id]);
+
   const handleSelectPendingOrder = (orderId: string) => {
     setSelectedPendingOrder(orderId);
     const order = pendingOrders.find(o => o.id === orderId);
     if (order) {
-      setOrderedQuantity(order.ordered_quantity);
+      // Pre-fill received with ordered quantity (user can adjust if needed)
+      setActualReceived(order.ordered_quantity);
       setNotes(order.notes || '');
     }
   };
 
-  const consumption = useMemo(() => {
-    const previousStock = parseFloat(item.stock_on_hand) || 0;
-    const received = parseFloat(actualReceived) || 0;
-    const newStockValue = parseFloat(newStock) || 0;
-
-    if (actualReceived && newStock) {
-      return previousStock + received - newStockValue;
-    }
-    return null;
-  }, [item.stock_on_hand, actualReceived, newStock]);
+  // Calculate the new stock that will result
+  const currentStock = parseFloat(item.stock_on_hand) || 0;
+  const receivedQty = parseFloat(actualReceived) || 0;
+  const newStockPreview = currentStock + receivedQty;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    const orderedQty = parseFloat(orderedQuantity);
-    const receivedQty = parseFloat(actualReceived);
-    const newStockQty = parseFloat(newStock);
+    const received = parseFloat(actualReceived);
 
-    if (isNaN(orderedQty) || isNaN(receivedQty) || isNaN(newStockQty)) {
-      setError('All quantities must be valid numbers');
+    if (isNaN(received)) {
+      setError('Please enter a valid quantity');
       return;
     }
 
-    if (orderedQty < 0 || receivedQty < 0 || newStockQty < 0) {
-      setError('Quantities cannot be negative');
+    if (received < 0) {
+      setError('Quantity cannot be negative');
       return;
     }
 
@@ -84,9 +75,7 @@ export default function StockUpdateModal({ isOpen, onClose, item, onSuccess }: S
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ordered_quantity: orderedQty,
-          actual_received: receivedQty,
-          new_stock: newStockQty,
+          actual_received: received,
           notes,
           pending_order_id: selectedPendingOrder || undefined
         })
@@ -107,9 +96,7 @@ export default function StockUpdateModal({ isOpen, onClose, item, onSuccess }: S
   };
 
   const resetForm = () => {
-    setOrderedQuantity('');
     setActualReceived('');
-    setNewStock('');
     setNotes('');
     setError('');
     setSelectedPendingOrder('');
@@ -121,7 +108,7 @@ export default function StockUpdateModal({ isOpen, onClose, item, onSuccess }: S
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Update Stock</h2>
+          <h2 className="text-xl font-semibold text-gray-900">Receive Stock</h2>
           <p className="text-sm text-gray-600 mt-1">{item.item}</p>
         </div>
 
@@ -132,25 +119,34 @@ export default function StockUpdateModal({ isOpen, onClose, item, onSuccess }: S
             </p>
           </div>
 
-          {pendingOrders.length > 0 && (
-            <div className="bg-yellow-50 border border-yellow-200 p-3 rounded">
-              <p className="text-sm font-medium text-yellow-900 mb-2">
-                Pending Orders ({pendingOrders.length})
+          {pendingOrders.length > 0 ? (
+            <div className="bg-yellow-50 border-2 border-yellow-300 p-4 rounded-lg">
+              <p className="text-sm font-semibold text-yellow-900 mb-3">
+                📦 {pendingOrders.length} Pending Order{pendingOrders.length > 1 ? 's' : ''} to Fulfill
               </p>
               <select
                 value={selectedPendingOrder}
                 onChange={(e) => handleSelectPendingOrder(e.target.value)}
-                className="w-full px-3 py-2 border border-yellow-300 rounded-md focus:ring-2 focus:ring-yellow-500 bg-white text-sm"
+                className="w-full px-3 py-2 border-2 border-yellow-400 rounded-md focus:ring-2 focus:ring-yellow-500 bg-white text-sm font-medium"
               >
-                <option value="">Select a pending order to fulfill...</option>
+                <option value="">-- Select a pending order to fulfill --</option>
                 {pendingOrders.map((order) => (
                   <option key={order.id} value={order.id}>
-                    Ordered {parseFloat(order.ordered_quantity).toFixed(2)} {item.units} on{' '}
+                    {parseFloat(order.ordered_quantity).toFixed(0)} {item.units} ordered on{' '}
                     {new Date(order.timestamp).toLocaleDateString()}
-                    {order.notes && ` - ${order.notes}`}
+                    {order.notes && ` (${order.notes})`}
                   </option>
                 ))}
               </select>
+              {selectedPendingOrder && (
+                <p className="text-xs text-yellow-700 mt-2">
+                  ✓ Order selected - quantity pre-filled below
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="bg-gray-50 border border-gray-200 p-3 rounded text-sm text-gray-600">
+              No pending orders for this item. You can still record a stock receipt.
             </div>
           )}
 
@@ -161,24 +157,8 @@ export default function StockUpdateModal({ isOpen, onClose, item, onSuccess }: S
           )}
 
           <div>
-            <label htmlFor="ordered" className="block text-sm font-medium text-gray-700 mb-1">
-              Ordered Quantity
-            </label>
-            <input
-              type="number"
-              id="ordered"
-              value={orderedQuantity}
-              onChange={(e) => setOrderedQuantity(e.target.value)}
-              step="0.01"
-              min="0"
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            />
-          </div>
-
-          <div>
             <label htmlFor="received" className="block text-sm font-medium text-gray-700 mb-1">
-              Actual Received Quantity
+              Quantity Received *
             </label>
             <input
               type="number"
@@ -189,32 +169,17 @@ export default function StockUpdateModal({ isOpen, onClose, item, onSuccess }: S
               min="0"
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              placeholder="Enter quantity received"
             />
           </div>
 
-          <div>
-            <label htmlFor="newStock" className="block text-sm font-medium text-gray-700 mb-1">
-              New Stock on Hand
-            </label>
-            <input
-              type="number"
-              id="newStock"
-              value={newStock}
-              onChange={(e) => setNewStock(e.target.value)}
-              step="0.01"
-              min="0"
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            />
-          </div>
-
-          {consumption !== null && (
-            <div className="bg-blue-50 border border-blue-200 p-3 rounded">
-              <p className="text-sm font-medium text-blue-900">
-                Calculated Consumption: <span className="text-lg">{consumption.toFixed(2)}</span> {item.units}
+          {actualReceived && (
+            <div className="bg-green-50 border border-green-200 p-3 rounded">
+              <p className="text-sm font-medium text-green-900">
+                New Stock: <span className="text-lg">{newStockPreview.toFixed(2)}</span> {item.units}
               </p>
-              <p className="text-xs text-blue-700 mt-1">
-                ({item.stock_on_hand} + {actualReceived} - {newStock})
+              <p className="text-xs text-green-700 mt-1">
+                ({item.stock_on_hand} + {actualReceived} = {newStockPreview.toFixed(2)})
               </p>
             </div>
           )}
@@ -227,8 +192,9 @@ export default function StockUpdateModal({ isOpen, onClose, item, onSuccess }: S
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              rows={3}
+              rows={2}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              placeholder="PO number, delivery info, etc."
             />
           </div>
 
@@ -246,10 +212,10 @@ export default function StockUpdateModal({ isOpen, onClose, item, onSuccess }: S
             </button>
             <button
               type="submit"
-              disabled={isSubmitting}
-              className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isSubmitting || !actualReceived}
+              className="flex-1 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Updating...' : 'Update Stock'}
+              {isSubmitting ? 'Receiving...' : 'Receive Stock'}
             </button>
           </div>
         </form>

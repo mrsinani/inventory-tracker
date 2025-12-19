@@ -39,12 +39,39 @@ export async function writeInventory(items: InventoryItem[]): Promise<void> {
 export async function readTransactions(): Promise<Transaction[]> {
   try {
     const filePath = path.join(DATA_DIR, 'transactions.csv');
-    const fileContent = await fs.readFile(filePath, 'utf-8');
+    let fileContent = await fs.readFile(filePath, 'utf-8');
+    
+    // Normalize line endings (CRLF -> LF) to handle mixed formats
+    fileContent = fileContent.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    
+    // Debug: Check last few lines of file
+    const lines = fileContent.split('\n').filter(line => line.trim());
+    console.log('[CSV] Total non-empty lines in transactions.csv:', lines.length);
+    console.log('[CSV] Last 3 lines:', lines.slice(-3));
+    
     const parsed = Papa.parse<Transaction>(fileContent, {
       header: true,
       skipEmptyLines: true,
       transform: (value) => value.trim()
     });
+    
+    console.log('[CSV] Parsed transactions count:', parsed.data.length);
+    if (parsed.errors.length > 0) {
+      console.log('[CSV] Parse errors:', parsed.errors);
+    }
+    
+    // Debug: Check last 3 parsed rows
+    const lastRows = parsed.data.slice(-3);
+    console.log('[CSV] Last 3 parsed rows:', lastRows.map(t => ({ 
+      id: t.id?.slice(0, 8), 
+      inventory_id: t.inventory_id?.slice(0, 8), 
+      status: t.status
+    })));
+    
+    // Debug: Check for pending transactions
+    const pendingCount = parsed.data.filter(t => t.status === 'pending').length;
+    console.log('[CSV] Pending transactions count:', pendingCount);
+    
     return parsed.data;
   } catch (error) {
     console.error('Error reading transactions:', error);
