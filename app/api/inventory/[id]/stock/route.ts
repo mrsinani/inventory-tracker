@@ -83,6 +83,7 @@ export async function PATCH(
           actual_received: receivedQty.toString(),
           previous_stock: previousStock.toString(),
           new_stock: newStockQty.toString(),
+          consumption: transactions[pendingIndex].consumption || "0", // Preserve existing or default to 0
           status: "completed",
           notes: notes || transactions[pendingIndex].notes || "",
         };
@@ -109,6 +110,7 @@ export async function PATCH(
       actual_received: receivedQty.toString(),
       previous_stock: previousStock.toString(),
       new_stock: newStockQty.toString(),
+      consumption: "0", // Required for CSV format compatibility
       status: "completed",
       notes: notes || "",
     };

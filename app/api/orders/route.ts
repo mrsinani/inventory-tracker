@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
       actual_received: "0",
       previous_stock: currentStock.toString(),
       new_stock: currentStock.toString(),
+      consumption: "0", // Required for CSV format compatibility
       status: "pending",
       notes: notes || "",
     };
