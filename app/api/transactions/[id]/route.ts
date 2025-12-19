@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readTransactions, readInventory, writeInventory } from '@/lib/csv';
-import fs from 'fs/promises';
-import path from 'path';
-import Papa from 'papaparse';
+import { readTransactions, readInventory, writeInventory, writeTransactions } from '@/lib/csv';
 
 // DELETE /api/transactions/[id] - Delete a transaction and revert stock changes
 export async function DELETE(
@@ -51,11 +48,8 @@ export async function DELETE(
       }
     }
 
-    // Write updated transactions back to file
-    const DATA_DIR = path.join(process.cwd(), 'data');
-    const filePath = path.join(DATA_DIR, 'transactions.csv');
-    const csv = Papa.unparse(transactions);
-    await fs.writeFile(filePath, csv, 'utf-8');
+    // Write updated transactions back to blob
+    await writeTransactions(transactions);
 
     return NextResponse.json({
       success: true,

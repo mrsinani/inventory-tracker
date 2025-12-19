@@ -4,12 +4,10 @@ import {
   writeInventory,
   appendTransaction,
   readTransactions,
+  writeTransactions,
 } from "@/lib/csv";
 import { Transaction } from "@/lib/types";
 import { v4 as uuidv4 } from "uuid";
-import fs from "fs/promises";
-import path from "path";
-import Papa from "papaparse";
 
 // PATCH /api/inventory/[id]/stock - Receive stock (simplified)
 export async function PATCH(
@@ -88,11 +86,8 @@ export async function PATCH(
           notes: notes || transactions[pendingIndex].notes || "",
         };
 
-        // Write updated transactions back to file
-        const DATA_DIR = path.join(process.cwd(), "data");
-        const filePath = path.join(DATA_DIR, "transactions.csv");
-        const csv = Papa.unparse(transactions);
-        await fs.writeFile(filePath, csv, "utf-8");
+        // Write updated transactions back to blob
+        await writeTransactions(transactions);
 
         return NextResponse.json({
           item: items[itemIndex],

@@ -10,8 +10,11 @@ export async function POST(request: NextRequest) {
     const { inventory_id, ordered_quantity, notes } = body;
 
     console.log(
-      "[API/orders] POST request - creating order for inventory_id:",
-      inventory_id
+      "[API/orders] POST",
+      "inventory_id=",
+      inventory_id,
+      "qty=",
+      ordered_quantity
     );
 
     if (!inventory_id || !ordered_quantity) {
@@ -54,13 +57,7 @@ export async function POST(request: NextRequest) {
       notes: notes || "",
     };
 
-    console.log(
-      "[API/orders] Created transaction object:",
-      JSON.stringify(transaction)
-    );
-
     await appendTransaction(transaction);
-    console.log("[API/orders] Transaction appended to CSV");
 
     return NextResponse.json(transaction, { status: 201 });
   } catch (error) {

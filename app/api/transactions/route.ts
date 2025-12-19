@@ -7,20 +7,17 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const inventoryId = searchParams.get('inventory_id');
 
-    console.log('[API/transactions] GET request - inventory_id filter:', inventoryId);
-
     let transactions = await readTransactions();
-    console.log('[API/transactions] Total transactions read:', transactions.length);
+    console.log(
+      '[API/transactions] GET',
+      inventoryId ? `inventory_id=${inventoryId}` : 'all',
+      '- total:',
+      transactions.length
+    );
 
     // Filter by inventory_id if provided
     if (inventoryId) {
-      const beforeFilter = transactions.length;
       transactions = transactions.filter(t => t.inventory_id === inventoryId);
-      console.log('[API/transactions] After inventory_id filter:', transactions.length, '(was', beforeFilter, ')');
-      
-      // Log the statuses of filtered transactions
-      const statuses = transactions.map(t => ({ id: t.id.slice(0, 8), status: t.status, statusType: typeof t.status }));
-      console.log('[API/transactions] Transaction statuses:', JSON.stringify(statuses));
     }
 
     // Sort by timestamp descending (newest first)

@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useMemo, useEffect, useCallback } from 'react';
-import { InventoryItem, Transaction } from '@/lib/types';
-import LowStockBadge from './LowStockBadge';
-import PendingOrderBadge from './PendingOrderBadge';
-import StockUpdateModal from './StockUpdateModal';
-import ItemFormModal from './ItemFormModal';
-import DeleteConfirmModal from './DeleteConfirmModal';
-import SearchFilter from './SearchFilter';
-import PlaceOrderModal from './PlaceOrderModal';
-import TransactionHistoryModal from './TransactionHistoryModal';
+import { useState, useMemo, useEffect, useCallback } from "react";
+import { InventoryItem, Transaction } from "@/lib/types";
+import LowStockBadge from "./LowStockBadge";
+import PendingOrderBadge from "./PendingOrderBadge";
+import StockUpdateModal from "./StockUpdateModal";
+import ItemFormModal from "./ItemFormModal";
+import DeleteConfirmModal from "./DeleteConfirmModal";
+import SearchFilter from "./SearchFilter";
+import PlaceOrderModal from "./PlaceOrderModal";
+import TransactionHistoryModal from "./TransactionHistoryModal";
 
 interface InventoryTableProps {
   initialItems: InventoryItem[];
@@ -17,71 +17,96 @@ interface InventoryTableProps {
 
 export default function InventoryTable({ initialItems }: InventoryTableProps) {
   const [items, setItems] = useState<InventoryItem[]>(initialItems);
-  const [pendingOrdersByItem, setPendingOrdersByItem] = useState<Map<string, Transaction[]>>(new Map());
+  const [pendingOrdersByItem, setPendingOrdersByItem] = useState<
+    Map<string, Transaction[]>
+  >(new Map());
   const [allPendingOrders, setAllPendingOrders] = useState<Transaction[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [departmentFilter, setDepartmentFilter] = useState('');
-  const [roomFilter, setRoomFilter] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [departmentFilter, setDepartmentFilter] = useState("");
+  const [roomFilter, setRoomFilter] = useState("");
   const [showLowStockOnly, setShowLowStockOnly] = useState(false);
 
-  const [stockUpdateModal, setStockUpdateModal] = useState<{ isOpen: boolean; item: InventoryItem | null }>({
+  const [stockUpdateModal, setStockUpdateModal] = useState<{
+    isOpen: boolean;
+    item: InventoryItem | null;
+  }>({
     isOpen: false,
-    item: null
+    item: null,
   });
-  const [itemFormModal, setItemFormModal] = useState<{ isOpen: boolean; item: InventoryItem | null }>({
+  const [itemFormModal, setItemFormModal] = useState<{
+    isOpen: boolean;
+    item: InventoryItem | null;
+  }>({
     isOpen: false,
-    item: null
+    item: null,
   });
-  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; item: InventoryItem | null }>({
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    item: InventoryItem | null;
+  }>({
     isOpen: false,
-    item: null
+    item: null,
   });
-  const [placeOrderModal, setPlaceOrderModal] = useState<{ isOpen: boolean; item: InventoryItem | null }>({
+  const [placeOrderModal, setPlaceOrderModal] = useState<{
+    isOpen: boolean;
+    item: InventoryItem | null;
+  }>({
     isOpen: false,
-    item: null
+    item: null,
   });
-  const [historyModal, setHistoryModal] = useState<{ isOpen: boolean; item: InventoryItem | null }>({
+  const [historyModal, setHistoryModal] = useState<{
+    isOpen: boolean;
+    item: InventoryItem | null;
+  }>({
     isOpen: false,
-    item: null
+    item: null,
   });
 
   const uniqueDepartments = useMemo(() => {
-    const departments = new Set(items.map(item => item.department).filter(Boolean));
+    const departments = new Set(
+      items.map((item) => item.department).filter(Boolean)
+    );
     return Array.from(departments).sort();
   }, [items]);
 
   const uniqueRooms = useMemo(() => {
-    const rooms = new Set(items.map(item => item.room).filter(Boolean));
+    const rooms = new Set(items.map((item) => item.room).filter(Boolean));
     return Array.from(rooms).sort();
   }, [items]);
 
   const filteredItems = useMemo(() => {
-    return items.filter(item => {
-      const matchesSearch = !searchTerm ||
+    return items.filter((item) => {
+      const matchesSearch =
+        !searchTerm ||
         item.item.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.vendor.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.department.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesDepartment = !departmentFilter || item.department === departmentFilter;
+      const matchesDepartment =
+        !departmentFilter || item.department === departmentFilter;
       const matchesRoom = !roomFilter || item.room === roomFilter;
 
-      const matchesLowStock = !showLowStockOnly ||
-        (parseFloat(item.stock_on_hand) || 0) < (parseFloat(item.stock_up) || 0);
+      const matchesLowStock =
+        !showLowStockOnly ||
+        (parseFloat(item.stock_on_hand) || 0) <
+          (parseFloat(item.stock_up) || 0);
 
-      return matchesSearch && matchesDepartment && matchesRoom && matchesLowStock;
+      return (
+        matchesSearch && matchesDepartment && matchesRoom && matchesLowStock
+      );
     });
   }, [items, searchTerm, departmentFilter, roomFilter, showLowStockOnly]);
 
   const fetchPendingOrders = useCallback(async () => {
     try {
-      const response = await fetch('/api/transactions');
+      const response = await fetch("/api/transactions", { cache: "no-store" });
       if (response.ok) {
         const allTransactions: Transaction[] = await response.json();
         const pendingMap = new Map<string, Transaction[]>();
         const pendingList: Transaction[] = [];
 
         allTransactions.forEach((t: Transaction) => {
-          if (t.status === 'pending') {
+          if (t.status === "pending") {
             pendingList.push(t);
             const existing = pendingMap.get(t.inventory_id) || [];
             existing.push(t);
@@ -93,7 +118,7 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
         setAllPendingOrders(pendingList);
       }
     } catch (error) {
-      console.error('Error fetching pending orders:', error);
+      console.error("Error fetching pending orders:", error);
     }
   }, []);
 
@@ -102,7 +127,7 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
   }, [fetchPendingOrders]);
 
   const refreshItems = async () => {
-    const response = await fetch('/api/inventory');
+    const response = await fetch("/api/inventory", { cache: "no-store" });
     if (response.ok) {
       const data = await response.json();
       setItems(data);
@@ -116,7 +141,7 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
     const isLowStock = stockOnHand < stockUp;
 
     if (!isLowStock) {
-      return '';
+      return "";
     }
 
     // Check if there are pending orders
@@ -129,12 +154,12 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
 
       // If pending orders would bring stock above reorder level, show yellow
       if (stockOnHand + totalPending >= stockUp) {
-        return 'bg-yellow-50';
+        return "bg-yellow-50";
       }
     }
 
     // Low stock with no orders or insufficient orders - show red
-    return 'bg-red-50';
+    return "bg-red-50";
   };
 
   const handleStockUpdate = async () => {
@@ -155,7 +180,7 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
   const handleDelete = async (id: string) => {
     try {
       const response = await fetch(`/api/inventory?id=${id}`, {
-        method: 'DELETE'
+        method: "DELETE",
       });
 
       if (response.ok) {
@@ -163,7 +188,7 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
         setDeleteModal({ isOpen: false, item: null });
       }
     } catch (error) {
-      console.error('Error deleting item:', error);
+      console.error("Error deleting item:", error);
     }
   };
 
@@ -210,15 +235,20 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredItems.map((item) => (
-                <tr
-                  key={item.id}
-                  className={getRowColorClass(item)}
-                >
+                <tr key={item.id} className={getRowColorClass(item)}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
-                      <div className="text-sm font-medium text-gray-900">{item.item}</div>
-                      <LowStockBadge stockOnHand={item.stock_on_hand} stockUp={item.stock_up} />
-                      <PendingOrderBadge inventoryId={item.id} pendingOrders={allPendingOrders} />
+                      <div className="text-sm font-medium text-gray-900">
+                        {item.item}
+                      </div>
+                      <LowStockBadge
+                        stockOnHand={item.stock_on_hand}
+                        stockUp={item.stock_up}
+                      />
+                      <PendingOrderBadge
+                        inventoryId={item.id}
+                        pendingOrders={allPendingOrders}
+                      />
                     </div>
                     <div className="text-sm text-gray-500">{item.vendor}</div>
                   </td>
@@ -238,19 +268,25 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
                     <div className="flex flex-col gap-1">
                       <div className="space-x-2">
                         <button
-                          onClick={() => setPlaceOrderModal({ isOpen: true, item })}
+                          onClick={() =>
+                            setPlaceOrderModal({ isOpen: true, item })
+                          }
                           className="text-yellow-600 hover:text-yellow-900"
                         >
                           Place Order
                         </button>
                         <button
-                          onClick={() => setStockUpdateModal({ isOpen: true, item })}
+                          onClick={() =>
+                            setStockUpdateModal({ isOpen: true, item })
+                          }
                           className="text-indigo-600 hover:text-indigo-900"
                         >
                           Receive
                         </button>
                         <button
-                          onClick={() => setHistoryModal({ isOpen: true, item })}
+                          onClick={() =>
+                            setHistoryModal({ isOpen: true, item })
+                          }
                           className="text-blue-600 hover:text-blue-900"
                         >
                           History
@@ -258,7 +294,9 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
                       </div>
                       <div className="space-x-2">
                         <button
-                          onClick={() => setItemFormModal({ isOpen: true, item })}
+                          onClick={() =>
+                            setItemFormModal({ isOpen: true, item })
+                          }
                           className="text-gray-600 hover:text-gray-900"
                         >
                           Edit
@@ -286,8 +324,8 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
 
         <div className="bg-gray-50 px-6 py-3 border-t border-gray-200">
           <p className="text-sm text-gray-700">
-            Showing <span className="font-medium">{filteredItems.length}</span> of{' '}
-            <span className="font-medium">{items.length}</span> items
+            Showing <span className="font-medium">{filteredItems.length}</span>{" "}
+            of <span className="font-medium">{items.length}</span> items
           </p>
         </div>
       </div>

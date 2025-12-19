@@ -1,18 +1,22 @@
-'use client';
+"use client";
 
-import { Transaction } from '@/lib/types';
+import { Transaction } from "@/lib/types";
 
 interface PendingOrderBadgeProps {
   inventoryId: string;
   pendingOrders?: Transaction[];
 }
 
-export default function PendingOrderBadge({ inventoryId, pendingOrders }: PendingOrderBadgeProps) {
+export default function PendingOrderBadge({
+  inventoryId,
+  pendingOrders,
+}: PendingOrderBadgeProps) {
   // Filter pending orders for this specific inventory item
-  const itemPendingOrders = pendingOrders?.filter(
-    (t) => t.inventory_id === inventoryId && t.status === 'pending'
-  ) || [];
-  
+  const itemPendingOrders =
+    pendingOrders?.filter(
+      (t) => t.inventory_id === inventoryId && t.status === "pending"
+    ) || [];
+
   const pendingCount = itemPendingOrders.length;
 
   if (pendingCount === 0) {
@@ -26,11 +30,11 @@ export default function PendingOrderBadge({ inventoryId, pendingOrders }: Pendin
   );
 
   return (
-    <span 
+    <span
       className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800"
       title={`${totalQuantity.toFixed(0)} units on order`}
     >
-      {pendingCount} ORDER{pendingCount > 1 ? 'S' : ''} PENDING
+      {pendingCount} ORDER{pendingCount > 1 ? "S" : ""} PENDING
     </span>
   );
 }
