@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readTransactions, readInventory, writeInventory, writeTransactions } from '@/lib/csv';
+import { readTransactions, getInventoryItem, updateInventoryItem, getTransaction, deleteTransaction, initDatabase } from '@/lib/db';
 
 // DELETE /api/transactions/[id] - Delete a transaction and revert stock changes
 export async function DELETE(
@@ -7,49 +7,43 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    await initDatabase();
     const transactionId = params.id;
 
-    // Read all transactions
-    const transactions = await readTransactions();
-    const transactionIndex = transactions.findIndex(t => t.id === transactionId);
+    // Get transaction directly (much faster than fetching all)
+    const transaction = await getTransaction(transactionId);
 
-    if (transactionIndex === -1) {
+    if (!transaction) {
       return NextResponse.json(
         { error: 'Transaction not found' },
         { status: 404 }
       );
     }
 
-    const transaction = transactions[transactionIndex];
-
-    // Remove the transaction first
-    transactions.splice(transactionIndex, 1);
-
-    // Recompute the item's stock based on remaining completed transactions
+    // Recompute the item's stock based on remaining completed transactions (before deletion)
     if (transaction.status === 'completed') {
-      const items = await readInventory();
-      const itemIndex = items.findIndex(i => i.id === transaction.inventory_id);
+      const item = await getInventoryItem(transaction.inventory_id);
 
-      if (itemIndex !== -1) {
-        // Find the latest completed transaction for this item (after deletion)
-        const remainingForItem = transactions
-          .filter(t => t.inventory_id === transaction.inventory_id && t.status === 'completed')
-          .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      if (item) {
+        // Find the latest completed transaction for this item (excluding the one we're deleting)
+        const remainingForItem = await readTransactions(transaction.inventory_id);
+        const latestCompleted = remainingForItem
+          .filter(t => t.id !== transactionId && t.status === 'completed')
+          .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
 
-        if (remainingForItem.length > 0) {
-          // Set stock to the most recent completed transaction's new_stock
-          items[itemIndex].stock_on_hand = remainingForItem[0].new_stock;
-        } else {
-          // No completed transactions remain; fall back to the deleted transaction's previous stock
-          items[itemIndex].stock_on_hand = transaction.previous_stock;
-        }
+        const updatedItem = {
+          ...item,
+          stock_on_hand: latestCompleted 
+            ? latestCompleted.new_stock 
+            : transaction.previous_stock
+        };
 
-        await writeInventory(items);
+        await updateInventoryItem(updatedItem);
       }
     }
 
-    // Write updated transactions back to blob
-    await writeTransactions(transactions);
+    // Delete the transaction using optimized function
+    await deleteTransaction(transactionId);
 
     return NextResponse.json({
       success: true,

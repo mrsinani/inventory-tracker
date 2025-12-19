@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readInventory, writeInventory } from '@/lib/csv';
+import { readInventory, readTransactions, insertInventoryItem, updateInventoryItem, deleteInventoryItem, deleteTransaction, initDatabase } from '@/lib/db';
 import { InventoryItem } from '@/lib/types';
 import { v4 as uuidv4 } from 'uuid';
 
 // GET /api/inventory - Get all inventory items
 export async function GET() {
   try {
+    await initDatabase();
     const items = await readInventory();
     return NextResponse.json(items);
   } catch (error) {
@@ -20,6 +21,7 @@ export async function GET() {
 // POST /api/inventory - Create a new inventory item
 export async function POST(request: NextRequest) {
   try {
+    await initDatabase();
     const body = await request.json();
 
     const newItem: InventoryItem = {
@@ -35,9 +37,7 @@ export async function POST(request: NextRequest) {
       stock_on_hand: body.stock_on_hand || '0'
     };
 
-    const items = await readInventory();
-    items.push(newItem);
-    await writeInventory(items);
+    await insertInventoryItem(newItem);
 
     return NextResponse.json(newItem, { status: 201 });
   } catch (error) {
@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/inventory - Update an existing item (not stock update)
 export async function PUT(request: NextRequest) {
   try {
+    await initDatabase();
     const body = await request.json();
     const { id, ...updates } = body;
 
@@ -63,9 +64,9 @@ export async function PUT(request: NextRequest) {
     }
 
     const items = await readInventory();
-    const itemIndex = items.findIndex(item => item.id === id);
+    const existingItem = items.find(item => item.id === id);
 
-    if (itemIndex === -1) {
+    if (!existingItem) {
       return NextResponse.json(
         { error: 'Item not found' },
         { status: 404 }
@@ -73,15 +74,15 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update item (preserve stock_on_hand unless explicitly updating)
-    items[itemIndex] = {
-      ...items[itemIndex],
+    const updatedItem: InventoryItem = {
+      ...existingItem,
       ...updates,
       id // Ensure ID doesn't change
     };
 
-    await writeInventory(items);
+    await updateInventoryItem(updatedItem);
 
-    return NextResponse.json(items[itemIndex]);
+    return NextResponse.json(updatedItem);
   } catch (error) {
     console.error('Error updating item:', error);
     return NextResponse.json(
@@ -94,6 +95,7 @@ export async function PUT(request: NextRequest) {
 // DELETE /api/inventory - Delete an item
 export async function DELETE(request: NextRequest) {
   try {
+    await initDatabase();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
@@ -105,16 +107,25 @@ export async function DELETE(request: NextRequest) {
     }
 
     const items = await readInventory();
-    const filteredItems = items.filter(item => item.id !== id);
+    const item = items.find(item => item.id === id);
 
-    if (filteredItems.length === items.length) {
+    if (!item) {
       return NextResponse.json(
         { error: 'Item not found' },
         { status: 404 }
       );
     }
 
-    await writeInventory(filteredItems);
+    // Delete all related transactions first (to satisfy foreign key constraint)
+    const transactions = await readTransactions();
+    const relatedTransactions = transactions.filter(t => t.inventory_id === id);
+    
+    for (const transaction of relatedTransactions) {
+      await deleteTransaction(transaction.id);
+    }
+
+    // Now delete the inventory item
+    await deleteInventoryItem(id);
 
     return NextResponse.json({ success: true });
   } catch (error) {

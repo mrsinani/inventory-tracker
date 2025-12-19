@@ -1,9 +1,10 @@
-import { readInventory } from '@/lib/csv';
+import { readInventory, initDatabase } from '@/lib/db';
 import InventoryTable from '@/components/InventoryTable';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
+  await initDatabase();
   const items = await readInventory();
 
   return (

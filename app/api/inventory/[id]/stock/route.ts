@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  readInventory,
-  writeInventory,
+  getInventoryItem,
+  updateInventoryItem,
   appendTransaction,
-  readTransactions,
-  writeTransactions,
-} from "@/lib/csv";
+  getTransaction,
+  updateTransaction,
+  initDatabase,
+} from "@/lib/db";
 import { Transaction } from "@/lib/types";
 import { v4 as uuidv4 } from "uuid";
 
@@ -15,6 +16,7 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
+    await initDatabase();
     const body = await request.json();
     const { actual_received, notes, pending_order_id } = body;
 
@@ -42,56 +44,49 @@ export async function PATCH(
       );
     }
 
-    // Read current inventory
-    const items = await readInventory();
-    const itemIndex = items.findIndex((item) => item.id === params.id);
+    // Read current inventory (direct query - much faster)
+    const item = await getInventoryItem(params.id);
 
-    if (itemIndex === -1) {
+    if (!item) {
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
-
-    const item = items[itemIndex];
     const previousStock = parseFloat(item.stock_on_hand) || 0;
 
     // Simple calculation: new stock = current + received
     const newStockQty = previousStock + receivedQty;
 
-    // Update stock_on_hand
-    items[itemIndex] = {
+    // Update stock_on_hand using optimized single-item update
+    const updatedItem = {
       ...item,
       stock_on_hand: newStockQty.toString(),
     };
 
-    await writeInventory(items);
+    await updateInventoryItem(updatedItem);
 
     // If completing a pending order, update it instead of creating new
     if (pending_order_id) {
-      // Read transactions and update the pending one
-      const transactions = await readTransactions();
-      const pendingIndex = transactions.findIndex(
-        (t) => t.id === pending_order_id
-      );
+      // Get transaction directly (much faster than fetching all)
+      const pendingTransaction = await getTransaction(pending_order_id);
 
-      if (pendingIndex !== -1) {
-        const orderedQty =
-          parseFloat(transactions[pendingIndex].ordered_quantity) || 0;
+      if (pendingTransaction) {
+        const orderedQty = parseFloat(pendingTransaction.ordered_quantity) || 0;
 
-        transactions[pendingIndex] = {
-          ...transactions[pendingIndex],
+        const updatedTransaction = {
+          ...pendingTransaction,
           actual_received: receivedQty.toString(),
           previous_stock: previousStock.toString(),
           new_stock: newStockQty.toString(),
-          consumption: transactions[pendingIndex].consumption || "0", // Preserve existing or default to 0
-          status: "completed",
-          notes: notes || transactions[pendingIndex].notes || "",
+          consumption: pendingTransaction.consumption || "0", // Preserve existing or default to 0
+          status: "completed" as const,
+          notes: notes || pendingTransaction.notes || "",
         };
 
-        // Write updated transactions back to blob
-        await writeTransactions(transactions);
+        // Update transaction using optimized single-item update
+        await updateTransaction(updatedTransaction);
 
         return NextResponse.json({
-          item: items[itemIndex],
-          transaction: transactions[pendingIndex],
+          item: updatedItem,
+          transaction: updatedTransaction,
         });
       }
     }
@@ -113,7 +108,7 @@ export async function PATCH(
     await appendTransaction(transaction);
 
     return NextResponse.json({
-      item: items[itemIndex],
+      item: updatedItem,
       transaction,
     });
   } catch (error) {
