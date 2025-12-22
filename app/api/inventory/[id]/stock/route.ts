@@ -18,28 +18,13 @@ export async function PATCH(
   try {
     await initDatabase();
     const body = await request.json();
-    const { actual_received, notes, pending_order_id } = body;
+    const { actual_received, new_stock, notes, pending_order_id, employee_name } =
+      body;
 
-    // Validation
-    if (actual_received === undefined) {
+    // Validation: require either actual_received (receive) or new_stock (direct set)
+    if (actual_received === undefined && new_stock === undefined) {
       return NextResponse.json(
-        { error: "Missing required field: actual_received" },
-        { status: 400 }
-      );
-    }
-
-    const receivedQty = parseFloat(actual_received);
-
-    if (isNaN(receivedQty)) {
-      return NextResponse.json(
-        { error: "Quantity must be a valid number" },
-        { status: 400 }
-      );
-    }
-
-    if (receivedQty < 0) {
-      return NextResponse.json(
-        { error: "Quantity cannot be negative" },
+        { error: "Missing required field: actual_received or new_stock" },
         { status: 400 }
       );
     }
@@ -51,9 +36,43 @@ export async function PATCH(
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
     const previousStock = parseFloat(item.stock_on_hand) || 0;
+    const isDirectUpdate = new_stock !== undefined;
 
-    // Simple calculation: new stock = current + received
-    const newStockQty = previousStock + receivedQty;
+    let receivedQty = 0;
+    let newStockQty = previousStock;
+
+    if (isDirectUpdate) {
+      const targetStock = parseFloat(new_stock);
+      if (isNaN(targetStock) || targetStock < 0) {
+        return NextResponse.json(
+          { error: "New stock must be a valid non-negative number" },
+          { status: 400 }
+        );
+      }
+      newStockQty = targetStock;
+      const delta = targetStock - previousStock;
+      // For history purposes, record the full adjustment (can be negative)
+      receivedQty = delta;
+    } else {
+      receivedQty = parseFloat(actual_received);
+
+      if (isNaN(receivedQty)) {
+        return NextResponse.json(
+          { error: "Quantity must be a valid number" },
+          { status: 400 }
+        );
+      }
+
+      if (receivedQty < 0) {
+        return NextResponse.json(
+          { error: "Quantity cannot be negative" },
+          { status: 400 }
+        );
+      }
+
+      // Simple calculation: new stock = current + received
+      newStockQty = previousStock + receivedQty;
+    }
 
     // Update stock_on_hand using optimized single-item update
     const updatedItem = {
@@ -63,15 +82,16 @@ export async function PATCH(
 
     await updateInventoryItem(updatedItem);
 
-    // If completing a pending order, update it instead of creating new
-    if (pending_order_id) {
+    // If completing a pending order, update it instead of creating new.
+    // Only applies to "receive" mode; direct updates are separate adjustments.
+    if (!isDirectUpdate && pending_order_id) {
       // Get transaction directly (much faster than fetching all)
       const pendingTransaction = await getTransaction(pending_order_id);
 
       if (pendingTransaction) {
         const orderedQty = parseFloat(pendingTransaction.ordered_quantity) || 0;
 
-        const updatedTransaction = {
+        const updatedTransaction: Transaction = {
           ...pendingTransaction,
           actual_received: receivedQty.toString(),
           previous_stock: previousStock.toString(),
@@ -79,6 +99,7 @@ export async function PATCH(
           consumption: pendingTransaction.consumption || "0", // Preserve existing or default to 0
           status: "completed" as const,
           notes: notes || pendingTransaction.notes || "",
+          employee_name: employee_name || pendingTransaction.employee_name || "",
         };
 
         // Update transaction using optimized single-item update
@@ -96,13 +117,14 @@ export async function PATCH(
       id: uuidv4(),
       inventory_id: params.id,
       timestamp: new Date().toISOString(),
-      ordered_quantity: receivedQty.toString(), // Use received as ordered since no pending order
+      ordered_quantity: receivedQty.toString(),
       actual_received: receivedQty.toString(),
       previous_stock: previousStock.toString(),
       new_stock: newStockQty.toString(),
       consumption: "0", // Required for CSV format compatibility
       status: "completed",
       notes: notes || "",
+      employee_name: employee_name || "",
     };
 
     await appendTransaction(transaction);

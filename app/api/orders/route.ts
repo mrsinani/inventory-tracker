@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
   try {
     await initDatabase();
     const body = await request.json();
-    const { inventory_id, ordered_quantity, notes } = body;
+    const { inventory_id, ordered_quantity, notes, employee_name } = body;
 
     console.log(
       "[API/orders] POST",
@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
       consumption: "0", // Required for compatibility
       status: "pending",
       notes: notes || "",
+      employee_name: employee_name || "",
     };
 
     await appendTransaction(transaction);

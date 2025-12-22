@@ -71,6 +71,7 @@ export async function initDatabase() {
         consumption TEXT NOT NULL DEFAULT '0',
         status TEXT NOT NULL CHECK(status IN ('pending', 'completed')),
         notes TEXT DEFAULT '',
+        employee_name TEXT DEFAULT '',
         FOREIGN KEY (inventory_id) REFERENCES inventory(id)
       )`,
       `CREATE INDEX IF NOT EXISTS idx_transactions_inventory_id ON transactions(inventory_id)`,
@@ -81,6 +82,15 @@ export async function initDatabase() {
     // Execute each statement separately
     for (const statement of statements) {
       await db.execute(statement);
+    }
+
+    // Backwards-compatible migration: ensure employee_name column exists
+    try {
+      await db.execute(
+        "ALTER TABLE transactions ADD COLUMN employee_name TEXT DEFAULT ''"
+      );
+    } catch {
+      // Ignore error if column already exists
     }
 
     // Mark as initialized
@@ -248,6 +258,7 @@ export async function readTransactions(
     consumption: (row.consumption as string) || "0",
     status: row.status as "pending" | "completed",
     notes: (row.notes as string) || "",
+    employee_name: (row.employee_name as string) || "",
   }));
 }
 
@@ -260,8 +271,8 @@ export async function writeTransactions(
   const statements = [
     { sql: "DELETE FROM transactions", args: [] },
     ...transactions.map((t) => ({
-      sql: `INSERT INTO transactions (id, inventory_id, timestamp, ordered_quantity, actual_received, previous_stock, new_stock, consumption, status, notes)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      sql: `INSERT INTO transactions (id, inventory_id, timestamp, ordered_quantity, actual_received, previous_stock, new_stock, consumption, status, notes, employee_name)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       args: [
         t.id,
         t.inventory_id,
@@ -273,6 +284,7 @@ export async function writeTransactions(
         t.consumption || "0",
         t.status,
         t.notes || "",
+        t.employee_name || "",
       ],
     })),
   ];
@@ -286,7 +298,7 @@ export async function updateTransaction(
   const db = getClient();
   await db.execute({
     sql: `UPDATE transactions 
-          SET inventory_id = ?, timestamp = ?, ordered_quantity = ?, actual_received = ?, previous_stock = ?, new_stock = ?, consumption = ?, status = ?, notes = ?
+          SET inventory_id = ?, timestamp = ?, ordered_quantity = ?, actual_received = ?, previous_stock = ?, new_stock = ?, consumption = ?, status = ?, notes = ?, employee_name = ?
           WHERE id = ?`,
     args: [
       transaction.inventory_id,
@@ -298,6 +310,7 @@ export async function updateTransaction(
       transaction.consumption || "0",
       transaction.status,
       transaction.notes || "",
+      transaction.employee_name || "",
       transaction.id,
     ],
   });
@@ -334,6 +347,7 @@ export async function getTransaction(id: string): Promise<Transaction | null> {
     consumption: (row.consumption as string) || "0",
     status: row.status as "pending" | "completed",
     notes: (row.notes as string) || "",
+    employee_name: (row.employee_name as string) || "",
   };
 }
 
@@ -342,8 +356,8 @@ export async function appendTransaction(
 ): Promise<void> {
   const db = getClient();
   await db.execute({
-    sql: `INSERT INTO transactions (id, inventory_id, timestamp, ordered_quantity, actual_received, previous_stock, new_stock, consumption, status, notes)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    sql: `INSERT INTO transactions (id, inventory_id, timestamp, ordered_quantity, actual_received, previous_stock, new_stock, consumption, status, notes, employee_name)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     args: [
       transaction.id,
       transaction.inventory_id,
@@ -355,6 +369,7 @@ export async function appendTransaction(
       transaction.consumption || "0",
       transaction.status,
       transaction.notes || "",
+      transaction.employee_name || "",
     ],
   });
 }

@@ -10,6 +10,7 @@ interface SearchFilterProps {
   departments: string[];
   rooms: string[];
   onAddItem: () => void;
+  onViewHistory?: () => void;
 }
 
 export default function SearchFilter({
@@ -23,7 +24,8 @@ export default function SearchFilter({
   onLowStockToggle,
   departments,
   rooms,
-  onAddItem
+  onAddItem,
+  onViewHistory
 }: SearchFilterProps) {
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm space-y-4">
@@ -70,6 +72,14 @@ export default function SearchFilter({
         >
           Add Item
         </button>
+        {onViewHistory && (
+          <button
+            onClick={onViewHistory}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            View All History
+          </button>
+        )}
       </div>
 
       <div className="flex items-center">

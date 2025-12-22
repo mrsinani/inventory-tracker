@@ -23,6 +23,7 @@ export interface Transaction {
   consumption?: string;
   status: "pending" | "completed";
   notes?: string;
+  employee_name?: string;
 }
 
 export interface StockUpdateInput {

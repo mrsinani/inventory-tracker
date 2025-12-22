@@ -32,3 +32,4 @@ CREATE INDEX IF NOT EXISTS idx_transactions_inventory_id ON transactions(invento
 CREATE INDEX IF NOT EXISTS idx_transactions_timestamp ON transactions(timestamp DESC);
 CREATE INDEX IF NOT EXISTS idx_transactions_status ON transactions(status);
 
+

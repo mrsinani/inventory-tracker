@@ -10,6 +10,7 @@ import DeleteConfirmModal from "./DeleteConfirmModal";
 import SearchFilter from "./SearchFilter";
 import PlaceOrderModal from "./PlaceOrderModal";
 import TransactionHistoryModal from "./TransactionHistoryModal";
+import AllTransactionsHistoryModal from "./AllTransactionsHistoryModal";
 
 interface InventoryTableProps {
   initialItems: InventoryItem[];
@@ -29,9 +30,11 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
   const [stockUpdateModal, setStockUpdateModal] = useState<{
     isOpen: boolean;
     item: InventoryItem | null;
+    mode: "receive" | "update";
   }>({
     isOpen: false,
     item: null,
+    mode: "receive",
   });
   const [itemFormModal, setItemFormModal] = useState<{
     isOpen: boolean;
@@ -61,6 +64,7 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
     isOpen: false,
     item: null,
   });
+  const [allHistoryModal, setAllHistoryModal] = useState(false);
 
   const uniqueDepartments = useMemo(() => {
     const departments = new Set(
@@ -164,7 +168,7 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
 
   const handleStockUpdate = async () => {
     await refreshItems();
-    setStockUpdateModal({ isOpen: false, item: null });
+    setStockUpdateModal({ isOpen: false, item: null, mode: "receive" });
   };
 
   const handlePlaceOrder = async () => {
@@ -206,6 +210,7 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
         departments={uniqueDepartments}
         rooms={uniqueRooms}
         onAddItem={() => setItemFormModal({ isOpen: true, item: null })}
+        onViewHistory={() => setAllHistoryModal(true)}
       />
 
       <div className="bg-white shadow-sm rounded-lg overflow-hidden">
@@ -277,11 +282,27 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
                         </button>
                         <button
                           onClick={() =>
-                            setStockUpdateModal({ isOpen: true, item })
+                            setStockUpdateModal({
+                              isOpen: true,
+                              item,
+                              mode: "receive",
+                            })
                           }
                           className="text-indigo-600 hover:text-indigo-900"
                         >
                           Receive
+                        </button>
+                        <button
+                          onClick={() =>
+                            setStockUpdateModal({
+                              isOpen: true,
+                              item,
+                              mode: "update",
+                            })
+                          }
+                          className="text-emerald-600 hover:text-emerald-900"
+                        >
+                          Update
                         </button>
                         <button
                           onClick={() =>
@@ -333,9 +354,16 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
       {stockUpdateModal.item && (
         <StockUpdateModal
           isOpen={stockUpdateModal.isOpen}
-          onClose={() => setStockUpdateModal({ isOpen: false, item: null })}
+          onClose={() =>
+            setStockUpdateModal({
+              isOpen: false,
+              item: null,
+              mode: "receive",
+            })
+          }
           item={stockUpdateModal.item}
           onSuccess={handleStockUpdate}
+          mode={stockUpdateModal.mode}
         />
       )}
 
@@ -372,6 +400,12 @@ export default function InventoryTable({ initialItems }: InventoryTableProps) {
           onTransactionDeleted={refreshItems}
         />
       )}
+
+      <AllTransactionsHistoryModal
+        isOpen={allHistoryModal}
+        onClose={() => setAllHistoryModal(false)}
+        onTransactionDeleted={refreshItems}
+      />
     </div>
   );
 }

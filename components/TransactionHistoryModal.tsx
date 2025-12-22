@@ -178,12 +178,22 @@ export default function TransactionHistoryModal({
                     </div>
                   </div>
 
-                  {transaction.notes && (
-                    <div className="mt-3 pt-3 border-t border-gray-200">
-                      <span className="text-xs text-gray-500">Notes:</span>
-                      <p className="text-sm text-gray-700 mt-1">
-                        {transaction.notes}
-                      </p>
+                  {(transaction.notes || transaction.employee_name) && (
+                    <div className="mt-3 pt-3 border-t border-gray-200 space-y-1">
+                      {transaction.employee_name && (
+                        <p className="text-xs text-gray-600">
+                          <span className="font-medium">Employee:</span>{" "}
+                          {transaction.employee_name}
+                        </p>
+                      )}
+                      {transaction.notes && (
+                        <div>
+                          <span className="text-xs text-gray-500">Notes:</span>
+                          <p className="text-sm text-gray-700 mt-1">
+                            {transaction.notes}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

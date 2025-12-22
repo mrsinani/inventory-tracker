@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { InventoryItem } from '@/lib/types';
+import { useState } from "react";
+import { InventoryItem } from "@/lib/types";
 
 interface PlaceOrderModalProps {
   isOpen: boolean;
@@ -10,20 +10,26 @@ interface PlaceOrderModalProps {
   onSuccess: () => void;
 }
 
-export default function PlaceOrderModal({ isOpen, onClose, item, onSuccess }: PlaceOrderModalProps) {
-  const [orderedQuantity, setOrderedQuantity] = useState('');
-  const [notes, setNotes] = useState('');
+export default function PlaceOrderModal({
+  isOpen,
+  onClose,
+  item,
+  onSuccess,
+}: PlaceOrderModalProps) {
+  const [orderedQuantity, setOrderedQuantity] = useState("");
+  const [notes, setNotes] = useState("");
+  const [employeeName, setEmployeeName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     const orderedQty = parseFloat(orderedQuantity);
 
     if (isNaN(orderedQty) || orderedQty <= 0) {
-      setError('Ordered quantity must be a positive number');
+      setError("Ordered quantity must be a positive number");
       return;
     }
 
@@ -31,14 +37,15 @@ export default function PlaceOrderModal({ isOpen, onClose, item, onSuccess }: Pl
 
     try {
       // Create a pending order transaction
-      const response = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           inventory_id: item.id,
           ordered_quantity: orderedQty,
-          notes
-        })
+          notes,
+          employee_name: employeeName || undefined,
+        }),
       });
 
       if (response.ok) {
@@ -46,19 +53,20 @@ export default function PlaceOrderModal({ isOpen, onClose, item, onSuccess }: Pl
         resetForm();
       } else {
         const data = await response.json();
-        setError(data.error || 'Failed to place order');
+        setError(data.error || "Failed to place order");
       }
     } catch (err) {
-      setError('Network error. Please try again.');
+      setError("Network error. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const resetForm = () => {
-    setOrderedQuantity('');
-    setNotes('');
-    setError('');
+    setOrderedQuantity("");
+    setNotes("");
+    setEmployeeName("");
+    setError("");
   };
 
   if (!isOpen) return null;
@@ -74,10 +82,16 @@ export default function PlaceOrderModal({ isOpen, onClose, item, onSuccess }: Pl
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="bg-gray-50 p-3 rounded">
             <p className="text-sm text-gray-600">
-              Current Stock: <span className="font-medium text-gray-900">{item.stock_on_hand} {item.units}</span>
+              Current Stock:{" "}
+              <span className="font-medium text-gray-900">
+                {item.stock_on_hand} {item.units}
+              </span>
             </p>
             <p className="text-sm text-gray-600">
-              Reorder Level: <span className="font-medium text-gray-900">{item.stock_up} {item.units}</span>
+              Reorder Level:{" "}
+              <span className="font-medium text-gray-900">
+                {item.stock_up} {item.units}
+              </span>
             </p>
           </div>
 
@@ -88,7 +102,10 @@ export default function PlaceOrderModal({ isOpen, onClose, item, onSuccess }: Pl
           )}
 
           <div>
-            <label htmlFor="ordered" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="ordered"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Quantity to Order *
             </label>
             <input
@@ -105,7 +122,27 @@ export default function PlaceOrderModal({ isOpen, onClose, item, onSuccess }: Pl
           </div>
 
           <div>
-            <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="employee"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Employee Name
+            </label>
+            <input
+              type="text"
+              id="employee"
+              value={employeeName}
+              onChange={(e) => setEmployeeName(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              placeholder="Who placed this order?"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="notes"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Order Notes
             </label>
             <textarea
@@ -120,7 +157,8 @@ export default function PlaceOrderModal({ isOpen, onClose, item, onSuccess }: Pl
 
           <div className="bg-yellow-50 border border-yellow-200 p-3 rounded">
             <p className="text-sm text-yellow-800">
-              This will record the order as pending. You can mark it as received later when it arrives.
+              This will record the order as pending. You can mark it as received
+              later when it arrives.
             </p>
           </div>
 
@@ -141,7 +179,7 @@ export default function PlaceOrderModal({ isOpen, onClose, item, onSuccess }: Pl
               disabled={isSubmitting}
               className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Placing Order...' : 'Place Order'}
+              {isSubmitting ? "Placing Order..." : "Place Order"}
             </button>
           </div>
         </form>
